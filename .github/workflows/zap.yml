@@ -1,33 +1,34 @@
-name: ZAP Baseline Scan
+name: ZAP Full Power Scan
 
 on:
-  workflow_dispatch: # Run manually from GitHub Actions tab
-  push:              # Or run on each push (optional)
+  workflow_dispatch:   # Run manually from Actions tab
+  push:                # Or auto-run on push (optional)
     branches: [ "main" ]
 
 jobs:
-  zap_scan:
+  zap_full_scan:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run ZAP Baseline Scan in Docker
+      - name: Run ZAP Full Scan in Docker
         run: |
           docker run -u root \
             -v $(pwd):/zap/wrk/:rw \
             --network=host ghcr.io/zaproxy/zaproxy:stable \
-            zap-baseline.py -t http://example.com \
-            -J report_json.json \
-            -w report_md.md \
-            -r report_html.html \
-            -a
+            zap-full-scan.py \
+              -t http://example.com \         # 🔴 Replace with your target
+              -J report_json.json \           # JSON output
+              -w report_md.md \               # Markdown output
+              -r report_html.html \           # HTML output
+              -a                              # Include active scan & spidering
 
       - name: Upload ZAP Reports
         uses: actions/upload-artifact@v4
         with:
-          name: zap-scan-reports
+          name: zap-full-scan-reports
           path: |
             report_html.html
             report_json.json
