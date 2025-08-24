@@ -1,28 +1,33 @@
 name: ZAP Baseline Scan
 
 on:
-  workflow_dispatch:
-  push:
-    branches: [ main ]
+  workflow_dispatch: # Run manually from GitHub Actions tab
+  push:              # Or run on each push (optional)
+    branches: [ "main" ]
 
 jobs:
   zap_scan:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run ZAP Baseline Scan (manual, no auto-artifact)
+      - name: Run ZAP Baseline Scan in Docker
         run: |
-          docker run -v $(pwd):/zap/wrk/:rw --network=host ghcr.io/zaproxy/zaproxy:stable \
+          docker run -u root \
+            -v $(pwd):/zap/wrk/:rw \
+            --network=host ghcr.io/zaproxy/zaproxy:stable \
             zap-baseline.py -t http://example.com \
-            -J report_json.json -w report_md.md -r report_html.html -a
+            -J report_json.json \
+            -w report_md.md \
+            -r report_html.html \
+            -a
 
-      - name: Upload ZAP reports
+      - name: Upload ZAP Reports
         uses: actions/upload-artifact@v4
         with:
-          name: zap-reports
+          name: zap-scan-reports
           path: |
             report_html.html
             report_json.json
