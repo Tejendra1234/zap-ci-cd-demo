@@ -1,7 +1,7 @@
 name: ZAP Baseline
 
 on:
-  workflow_dispatch:   # allows manual run
+  workflow_dispatch:
   push:
     branches: [ main ]
 
@@ -15,14 +15,14 @@ jobs:
       - name: Run ZAP Baseline
         uses: zaproxy/action-baseline@v0.13.0
         with:
-          target: "http://example.com"   # replace later with your DVWA target
+          target: "http://example.com"   # change this later
           cmd_options: "-a"
-          allow_issue_writing: false     # prevent GitHub issue creation
+          allow_issue_writing: false
 
       - name: Upload ZAP Reports
-        uses: actions/upload-artifact@v4   # ✅ updated to v4
+        uses: actions/upload-artifact@v4
         with:
-          name: ZAP-Reports
+          name: zap-reports   # ✅ changed from zap_scan to zap-reports
           path: |
             report_html.html
             report_md.md
